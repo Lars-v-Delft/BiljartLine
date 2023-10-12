@@ -13,7 +13,7 @@ public class CompetitionController {
     private final CompetitionService competitionService;
 
     @GetMapping("/byFederation")
-    public List<CompetitionDTO> getByFederationId(@RequestParam(value = "federationId") long federationId) {
+    public List<CompetitionDTO> getByFederationId(@RequestParam(value = "id") long federationId) {
         return competitionService.getByFederationId(federationId);
     }
 }
