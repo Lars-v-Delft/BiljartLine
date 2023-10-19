@@ -16,4 +16,5 @@ public class Competition {
     private GameType gameType;
     private LocalDate endDate;
     private LocalDate startDate;
+    private boolean published;
 }

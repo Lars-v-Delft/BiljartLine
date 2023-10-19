@@ -13,4 +13,5 @@ public class CompetitionDTO {
     private GameType gameType;
     private LocalDate startDate;
     private LocalDate endDate;
+    private boolean published;
 }
