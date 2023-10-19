@@ -15,13 +15,13 @@ public class CompetitionController {
     @GetMapping("/byFederation")
     public List<CompetitionDTO> getByFederation(
             @RequestParam(value = "id") long federationId,
-            @RequestParam(required = false, value = "fromDate") LocalDate fromDate,
-            @RequestParam(required = false, value = "toDate") LocalDate toDate) {
-        if (fromDate == null && toDate == null)
-            return competitionService.getAllByFederationId(federationId);
-        else {
-            return competitionService.getByFederationDuring(federationId, fromDate, toDate);
+            @RequestParam(required = false, defaultValue = "0001-01-01", value = "fromDate") LocalDate fromDate,
+            @RequestParam(required = false, defaultValue = "9999-09-09", value = "toDate") LocalDate toDate,
+            @RequestParam(required = false, defaultValue = "false", value = "includeUnpublished") boolean includeUnpublished) {
+        if (includeUnpublished) {
+            // check permissions
         }
+        return competitionService.getByFederation(federationId, fromDate, toDate, includeUnpublished);
     }
 
     @GetMapping("/{id}")

@@ -1,6 +1,7 @@
 package com.biljartline.billiardsapi.competition;
 
 import com.biljartline.billiardsapi.exceptions.ApiNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,28 +12,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class CompetitionService {
     private final CompetitionRepo competitionRepo;
 
-    @Autowired
-    public CompetitionService(CompetitionRepo competitionRepo) {
-        this.competitionRepo = competitionRepo;
-    }
-
-    public List<CompetitionDTO> getAllByFederationId(long federationId) {
-        List<Competition> competitions = competitionRepo.findByFederationId(federationId);
-        return competitions.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    public List<CompetitionDTO> getByFederationDuring(long federationId, LocalDate fromDate, LocalDate toDate){
-        if (fromDate == null)
-            fromDate = LocalDate.ofYearDay(1, 1);
-        if (toDate == null)
-            toDate = LocalDate.ofYearDay(9999,364);
+    public List<CompetitionDTO> getByFederation
+            (long federationId, LocalDate fromDate, LocalDate toDate, boolean includeUnpublished){
         List<Competition> competitions = competitionRepo
-                .findByFederationIdAndStartDateBeforeAndEndDateAfter(federationId, toDate, fromDate);
+                .findByFederationIdAndStartDateBeforeAndEndDateAfterAndPublishedIsGreaterThanEqual
+                        (federationId, toDate, fromDate, !includeUnpublished);
         return competitions.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -54,6 +42,7 @@ public class CompetitionService {
         dto.setGameType(competition.getGameType());
         dto.setStartDate(competition.getStartDate());
         dto.setEndDate(competition.getEndDate());
+        dto.setPublished(competition.isPublished());
         return dto;
     }
 }
