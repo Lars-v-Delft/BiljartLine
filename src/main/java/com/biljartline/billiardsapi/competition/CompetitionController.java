@@ -25,7 +25,7 @@ public class CompetitionController {
     }
 
     @GetMapping("/{id}")
-    public CompetitionDTO getById(@PathVariable("id") long id) {
+    public CompetitionDTO get(@PathVariable("id") long id) {
         return competitionService.getById(id);
     }
 }
