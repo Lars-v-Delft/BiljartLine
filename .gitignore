@@ -38,3 +38,4 @@ src/main/resources/secrets.properties
 ### LOGS ###
 logs/
 logs/spring-boot-logger.log
+*.log
