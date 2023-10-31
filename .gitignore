@@ -37,3 +37,4 @@ src/main/resources/secrets.properties
 
 ### LOGS ###
 logs/
+src/main/resources/billiardsKey.p12
