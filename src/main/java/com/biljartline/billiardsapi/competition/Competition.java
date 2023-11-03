@@ -7,8 +7,10 @@ import java.time.LocalDate;
 
 @Entity
 @Getter
+@Setter
 public class Competition {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private long federationId;
     private String name;
