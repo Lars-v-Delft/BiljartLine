@@ -39,6 +39,17 @@ public class ExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @org.springframework.web.bind.annotation.ExceptionHandler(InvalidArgumentsException.class)
+    public Map<String, String> handleApiInvalidArgumentsException(InvalidArgumentsException e){
+        log.warn("An ArgumentNotValidException occurred", e);
+        Map<String, String> errorMap = new HashMap<>();
+        e.getFieldErrors().forEach(error ->{
+            errorMap.put(error.getField(), error.getDefaultMessage());
+        });
+        return errorMap;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @org.springframework.web.bind.annotation.ExceptionHandler(InvalidArgumentException.class)
     public BilliardsException handleApiInvalidArgumentException(InvalidArgumentException e){
         log.warn("An InvalidArgumentException occurred", e);

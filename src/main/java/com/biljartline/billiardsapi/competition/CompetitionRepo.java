@@ -15,7 +15,7 @@ public interface CompetitionRepo extends JpaRepository<Competition, Long> {
     List<Competition> findByFederationIdAndEndDateAfterAndStartDateBeforeAndPublishedIsGreaterThanEqual
             (long federationId, LocalDate fromDate, LocalDate toDate, boolean publishedOnly);
     @Query("SELECT c FROM Competition c" +
-            " WHERE c.federationId = ?1" +
+            " WHERE c.federation.id = ?1" +
             " and c.endDate > ?2" +
             " and c.startDate < ?3" +
             " and c.published >= ?4")
