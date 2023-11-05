@@ -72,13 +72,12 @@ public class CompetitionController {
         Set<ConstraintViolation<CompetitionDTO>> violations = validator.validate(competitionDTO);
 
         List<FieldError> fieldErrors = new ArrayList<>();
-        violations.forEach(violation -> {
-            fieldErrors.add(new FieldError(
-                    "competitionDTO",
-                    violation.getPropertyPath().toString(),
-                    violation.getMessage()
-            ));
-        });
+        violations.forEach(violation ->
+                fieldErrors.add(new FieldError(
+                        "competitionDTO",
+                        violation.getPropertyPath().toString(),
+                        violation.getMessage()
+                )));
 
         if (!fieldErrors.isEmpty())
             throw new InvalidArgumentsException(fieldErrors);
