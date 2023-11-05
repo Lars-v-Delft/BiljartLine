@@ -1,17 +1,23 @@
 package com.biljartline.billiardsapi.competition;
 
+import com.biljartline.billiardsapi.annotations.After;
+import com.biljartline.billiardsapi.annotations.Before;
+import com.biljartline.billiardsapi.annotations.ValueOfEnum;
+import jakarta.validation.constraints.*;
 import lombok.*;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
 public class CompetitionDTO {
     private long id;
     private long federationId;
+    @Size(min = 5, max = 40)
     private String name;
-    private GameType gameType;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    @ValueOfEnum(enumClass = GameType.class)
+    private String gameType;
+    @After(compareDate = "1900-01-01")
+    private String startDate;
+    @After(compareDate = "1900-01-01")
+    private String endDate;
     private boolean published;
 }

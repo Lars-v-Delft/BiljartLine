@@ -1,6 +1,7 @@
 package com.biljartline.billiardsapi.team;
 
 import com.biljartline.billiardsapi.competition.CompetitionDTO;
+import com.biljartline.billiardsapi.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,13 @@ public class TeamService {
     return teams.stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
+    }
+
+    public boolean delete(long id){
+        if (!teamRepo.existsById(id))
+            throw new ResourceNotFoundException("team with id " + id + " could not be found");
+        teamRepo.deleteById(id);
+        return true;
     }
 
     private TeamDTO convertToDTO(Team team){

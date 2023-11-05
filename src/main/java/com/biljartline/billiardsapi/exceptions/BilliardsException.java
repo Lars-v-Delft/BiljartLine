@@ -7,13 +7,13 @@ import org.springframework.http.HttpStatus;
 import java.time.Instant;
 
 @Getter
-public class ApiException {
+public class BilliardsException {
     private final HttpStatus status;
     private final String message;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private final Instant timestampUTC;
 
-    public ApiException(HttpStatus status, String message){
+    public BilliardsException(HttpStatus status, String message){
         this.status = status;
         this.message = message;
         timestampUTC = Instant.now();

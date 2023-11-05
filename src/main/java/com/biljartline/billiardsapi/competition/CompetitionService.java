@@ -1,13 +1,22 @@
 package com.biljartline.billiardsapi.competition;
 
-import com.biljartline.billiardsapi.exceptions.ApiNotFoundException;
+import com.biljartline.billiardsapi.exceptions.InvalidArgumentException;
+import com.biljartline.billiardsapi.exceptions.ResourceNotFoundException;
+import com.biljartline.billiardsapi.federation.Federation;
+import com.biljartline.billiardsapi.federation.FederationRepo;
+import com.biljartline.billiardsapi.team.Team;
+import com.biljartline.billiardsapi.team.TeamDTO;
+import com.biljartline.billiardsapi.team.TeamRepo;
+import com.biljartline.billiardsapi.team.TeamService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -15,34 +24,90 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CompetitionService {
     private final CompetitionRepo competitionRepo;
+    private final FederationRepo federationRepo;
+    private final TeamRepo teamRepo;
 
     public List<CompetitionDTO> getByFederation
-            (long federationId, LocalDate fromDate, LocalDate toDate, boolean includeUnpublished){
+            (long federationId, LocalDate fromDate, LocalDate toDate, boolean publishedOnly) {
         List<Competition> competitions = competitionRepo
-                .findByFederationIdAndStartDateBeforeAndEndDateAfterAndPublishedIsGreaterThanEqual
-                        (federationId, toDate, fromDate, !includeUnpublished);
+                .findDuring(federationId, fromDate, toDate, publishedOnly);
+
         return competitions.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-    public CompetitionDTO getById(long competitionId) {
-        Optional<Competition> competition = competitionRepo.findById(competitionId);
+    private Competition getEntityById(long id) {
+        Optional<Competition> competition = competitionRepo.findById(id);
         if (competition.isPresent())
-            return convertToDTO(competition.get());
+            return competition.get();
         else
-            throw new ApiNotFoundException("competition with id " + competitionId + " could not be found");
+            throw new ResourceNotFoundException("competition with id " + id + " could not be found");
     }
 
-    private CompetitionDTO convertToDTO(Competition competition) {
+    public CompetitionDTO getById(long id) {
+        return convertToDTO(getEntityById(id));
+    }
+
+    public CompetitionDTO add(CompetitionDTO competitionDTO) {
+        Competition competition = convertToEntity(competitionDTO);
+        if (competition.getId() != 0)
+            throw new InvalidArgumentException("Competition cannot have Id before creation");
+        if (competition.getStartDate().isAfter(competition.getEndDate()))
+            throw new InvalidArgumentException("Start date cannot be after end date");
+        if (!federationRepo.existsById(competition.getFederation().getId()))
+            throw new InvalidArgumentException("Federation with id " + competitionDTO.getFederationId() + " is not known");
+
+        return convertToDTO(competitionRepo.save(competition));
+    }
+
+    public CompetitionDTO update(CompetitionDTO competitionDTO) {
+        Competition competition = convertToEntity(competitionDTO);
+        if (!competitionRepo.existsById(competitionDTO.getId()))
+            throw new ResourceNotFoundException("competition with id " + competitionDTO.getId() + " could not be found");
+        if (competition.getStartDate().isAfter(competition.getEndDate()))
+            throw new InvalidArgumentException("Start date cannot be after end date");
+
+        Competition original = getEntityById(competition.getId());
+        if (original.getFederation().getId() != competition.getFederation().getId() )
+            throw new InvalidArgumentException("federationId cannot be changed");
+
+        return convertToDTO(competitionRepo.save(competition));
+    }
+
+    public void delete(long id) {
+        if (!competitionRepo.existsById(id))
+            throw new ResourceNotFoundException("competition with id " + id + " could not be found");
+        List<Team> teams = teamRepo.findByCompetitionId(id);
+        teams.forEach(t -> teamRepo.deleteById(t.getId()));
+        competitionRepo.deleteById(id);
+    }
+
+    private CompetitionDTO convertToDTO(Competition entity) {
         CompetitionDTO dto = new CompetitionDTO();
-        dto.setId(competition.getId());
-        dto.setFederationId(competition.getFederationId());
-        dto.setName(competition.getName());
-        dto.setGameType(competition.getGameType());
-        dto.setStartDate(competition.getStartDate());
-        dto.setEndDate(competition.getEndDate());
-        dto.setPublished(competition.isPublished());
+        dto.setId(entity.getId());
+        dto.setFederationId(entity.getFederation().getId());
+        dto.setName(entity.getName());
+        dto.setGameType(entity.getGameType().toString());
+        dto.setStartDate(entity.getStartDate().toString());
+        dto.setEndDate(entity.getEndDate().toString());
+        dto.setPublished(entity.isPublished());
         return dto;
+    }
+
+    private Competition convertToEntity(CompetitionDTO dto) {
+        Competition entity = new Competition();
+        entity.setId(dto.getId());
+
+        Federation federation = new Federation();
+        federation.setId(dto.getFederationId());
+        entity.setFederation(federation);
+
+        entity.setName(dto.getName());
+        entity.setGameType(GameType.valueOf(dto.getGameType()));
+        entity.setStartDate(LocalDate.parse(dto.getStartDate()));
+        entity.setEndDate(LocalDate.parse(dto.getEndDate()));
+        entity.setPublished(dto.isPublished());
+        return entity;
     }
 }
