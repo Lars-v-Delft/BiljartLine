@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,8 +67,10 @@ public class CompetitionService {
             throw new ResourceNotFoundException("competition with id " + competitionDTO.getId() + " could not be found");
         if (competition.getStartDate().isAfter(competition.getEndDate()))
             throw new InvalidArgumentException("Start date cannot be after end date");
-        if (!federationRepo.existsById(competition.getFederation().getId()))
-            throw new InvalidArgumentException("Federation with id " + competitionDTO.getFederationId() + " is not known");
+
+        Competition original = getEntityById(competition.getId());
+        if (original.getFederation().getId() != competition.getFederation().getId() )
+            throw new InvalidArgumentException("federationId cannot be changed");
 
         return convertToDTO(competitionRepo.save(competition));
     }

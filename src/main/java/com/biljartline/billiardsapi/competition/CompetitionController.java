@@ -6,17 +6,10 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
@@ -63,9 +56,11 @@ public class CompetitionController {
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/update/{id}")
     public CompetitionDTO update(@PathVariable long id, @RequestBody Map<String, Object> fields) {
-        CompetitionDTO competitionDTO = competitionService.getById(id);;
+        CompetitionDTO competitionDTO = competitionService.getById(id);
 
         fields.forEach((key, value) -> {
+            if (Objects.equals(key, "id"))
+                throw new InvalidArgumentException("id cannot be changed");
             Field field = ReflectionUtils.findField(CompetitionDTO.class, key);
             if (field == null)
                 throw new InvalidArgumentException(key + " is not a valid field for competition");
@@ -91,10 +86,9 @@ public class CompetitionController {
         return competitionService.update(competitionDTO);
     }
 
-
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/delete")
-    public void delete(@RequestParam long id) {
+    @DeleteMapping("/delete/{id}")
+    public void delete(@PathVariable long id) {
         competitionService.delete(id);
     }
 }
