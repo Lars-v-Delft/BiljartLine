@@ -1,9 +1,7 @@
 package com.biljartline.billiardsapi.team;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.biljartline.billiardsapi.competition.Competition;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +14,9 @@ public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private long competitionId;
+    @ManyToOne
+    @JoinColumn(name = "competition_id")
+    private Competition competition;
     private String name;
     private DayOfWeek homeGameDay;
     private int timesViewed;

@@ -1,5 +1,6 @@
 package com.biljartline.billiardsapi.team;
 
+import com.biljartline.billiardsapi.competition.CompetitionDTO;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentException;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentsException;
 import jakarta.validation.ConstraintViolation;
@@ -25,6 +26,12 @@ public class TeamController {
     @GetMapping("/by-competition/{competitionId}")
     public List<TeamDTO> getByCompetitionId(@PathVariable long competitionId) {
         return teamService.getByCompetitionId(competitionId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}")
+    public TeamDTO get(@PathVariable long id) {
+        return teamService.getById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

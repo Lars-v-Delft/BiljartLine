@@ -14,10 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,8 +49,11 @@ public class CompetitionService {
     public CompetitionDTO add(CompetitionDTO competitionDTO) {
         Competition competition = convertToEntity(competitionDTO);
         if (competition.getId() != 0)
-            throw new InvalidArgumentException("Competition cannot have Id before creation");
+            throw new InvalidArgumentException("Competition cannot have Id at creation");
+        if (!competition.getTeams().isEmpty())
+            throw new InvalidArgumentException("Competition cannot have teams at creation");
         if (competition.getStartDate().isAfter(competition.getEndDate()))
+
             throw new InvalidArgumentException("Start date cannot be after end date");
         if (!federationRepo.existsById(competition.getFederation().getId()))
             throw new InvalidArgumentException("Federation with id " + competitionDTO.getFederationId() + " is not known");
@@ -71,6 +71,9 @@ public class CompetitionService {
         Competition original = getEntityById(competition.getId());
         if (original.getFederation().getId() != competition.getFederation().getId())
             throw new InvalidArgumentException("federationId cannot be changed");
+        if (!original.getTeams().stream().map(Team::getId).collect(Collectors.toSet())
+                .equals(competition.getTeams().stream().map(Team::getId).collect(Collectors.toSet())))
+            throw new InvalidArgumentException("TeamsIds cannot be changed through competition, use team instead");
 
         return convertToDTO(competitionRepo.save(competition));
     }
@@ -88,6 +91,7 @@ public class CompetitionService {
         dto.setId(entity.getId());
         dto.setFederationId(entity.getFederation().getId());
         dto.setName(entity.getName());
+        dto.setTeamIds(entity.getTeams().stream().map(Team::getId).collect(Collectors.toSet()));
         dto.setGameType(entity.getGameType().toString());
         dto.setStartDate(entity.getStartDate().toString());
         dto.setEndDate(entity.getEndDate().toString());
@@ -98,16 +102,24 @@ public class CompetitionService {
     private Competition convertToEntity(CompetitionDTO dto) {
         Competition entity = new Competition();
         entity.setId(dto.getId());
-
+        // set parent
         Federation federation = new Federation();
         federation.setId(dto.getFederationId());
         entity.setFederation(federation);
-
+        // set children
+        Set<Team> teams = dto.getTeamIds().stream().map(teamId -> {
+            Team team = new Team();
+            team.setId(teamId);
+            return team;
+        }).collect(Collectors.toSet());
+        entity.setTeams(teams);
+        // set basic data
         entity.setName(dto.getName());
         entity.setGameType(GameType.valueOf(dto.getGameType()));
         entity.setStartDate(LocalDate.parse(dto.getStartDate()));
         entity.setEndDate(LocalDate.parse(dto.getEndDate()));
         entity.setPublished(dto.isPublished());
+
         return entity;
     }
 }

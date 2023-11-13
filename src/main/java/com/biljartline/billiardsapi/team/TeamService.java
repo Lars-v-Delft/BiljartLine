@@ -1,5 +1,7 @@
 package com.biljartline.billiardsapi.team;
 
+import com.biljartline.billiardsapi.competition.Competition;
+import com.biljartline.billiardsapi.competition.CompetitionDTO;
 import com.biljartline.billiardsapi.competition.CompetitionRepo;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentException;
 import com.biljartline.billiardsapi.exceptions.ResourceNotFoundException;
@@ -39,11 +41,12 @@ public class TeamService {
     public TeamDTO add(TeamDTO teamDTO) {
         Team team = convertToEntity(teamDTO);
         if (team.getId() != 0)
-            throw new InvalidArgumentException("Team cannot have Id before creation");
+            throw new InvalidArgumentException("Team cannot have Id at creation");
         if (team.getTimesViewed() != 0)
-            throw new InvalidArgumentException("Team cannot have views before creation");
-        if (!competitionRepo.existsById(team.getCompetitionId()))
-            throw new InvalidArgumentException("Competition with id " + team.getCompetitionId() + " is not known");
+            throw new InvalidArgumentException("Team cannot have views at creation");
+
+        if (!competitionRepo.existsById(team.getCompetition().getId()))
+            throw new InvalidArgumentException("Competition with id " + team.getCompetition().getId() + " is not known");
 
         return convertToDTO(teamRepo.save(team));
     }
@@ -52,8 +55,9 @@ public class TeamService {
         Team team = convertToEntity(teamDTO);
         if (!teamRepo.existsById(team.getId()))
             throw new ResourceNotFoundException("team with id " + team.getId() + " could not be found");
+
         Team original = getEntityById(team.getId());
-        if (original.getCompetitionId() != team.getCompetitionId())
+        if (original.getCompetition().getId() != team.getCompetition().getId())
             throw new InvalidArgumentException("teamId cannot be changed");
 
         return convertToDTO(teamRepo.save(team));
@@ -74,7 +78,7 @@ public class TeamService {
     private TeamDTO convertToDTO(Team team) {
         TeamDTO dto = new TeamDTO();
         dto.setId(team.getId());
-        dto.setCompetitionId(team.getCompetitionId());
+        dto.setCompetitionId(team.getCompetition().getId());
         dto.setName(team.getName());
         dto.setHomeGameDay(team.getHomeGameDay().ordinal());
         dto.setTimesViewed(team.getTimesViewed());
@@ -84,7 +88,11 @@ public class TeamService {
     private Team convertToEntity(TeamDTO dto) {
         Team entity = new Team();
         entity.setId(dto.getId());
-        entity.setCompetitionId(dto.getCompetitionId());
+        // set parent
+        Competition competition = new Competition();
+        competition.setId(dto.getCompetitionId());
+        entity.setCompetition(competition);
+        // set basic data
         entity.setName(dto.getName());
         entity.setHomeGameDay(DayOfWeek.of(dto.getHomeGameDay()));
         entity.setTimesViewed(dto.getTimesViewed());
