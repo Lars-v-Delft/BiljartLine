@@ -13,6 +13,7 @@ import java.time.DayOfWeek;
 public class TeamDTO {
     private long id;
     private long competitionId;
+    private long[] playerIds = new long[0];
     @Size(min = 5, max = 40)
     private String name;
     @Min(value = 1)
