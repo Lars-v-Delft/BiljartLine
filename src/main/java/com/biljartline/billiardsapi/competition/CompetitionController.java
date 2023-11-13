@@ -17,15 +17,15 @@ import java.time.LocalDate;
 import java.util.*;
 
 @RestController
-@RequestMapping("/competition")
+@RequestMapping("/competitions")
 @RequiredArgsConstructor
 public class CompetitionController {
     private final CompetitionService competitionService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/byFederation")
+    @GetMapping("/by-federation/{federationId}")
     public List<CompetitionDTO> findByFederation(
-            @RequestParam(value = "id") long federationId,
+            @PathVariable long federationId,
             @RequestParam(required = false, defaultValue = "0001-01-01", value = "fromDate") LocalDate fromDate,
             @RequestParam(required = false, defaultValue = "9999-09-09", value = "toDate") LocalDate toDate,
             @RequestParam(required = false, defaultValue = "true", value = "publishedOnly") boolean publishedOnly) {
@@ -37,25 +37,25 @@ public class CompetitionController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public CompetitionDTO get(@PathVariable("id") long id) {
+    public CompetitionDTO get(@PathVariable long id) {
         return competitionService.getById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/add")
-    public CompetitionDTO add(@RequestBody @Valid CompetitionDTO competition) {
+    @PostMapping("")
+    public CompetitionDTO post(@RequestBody @Valid CompetitionDTO competition) {
         return competitionService.add(competition);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/update")
-    public CompetitionDTO update(@Valid @RequestBody CompetitionDTO competition) {
+    @PutMapping("")
+    public CompetitionDTO put(@Valid @RequestBody CompetitionDTO competition) {
         return competitionService.update(competition);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/update/{id}")
-    public CompetitionDTO update(@PathVariable long id, @RequestBody Map<String, Object> fields) {
+    @PatchMapping("/{id}")
+    public CompetitionDTO patch(@PathVariable long id, @RequestBody Map<String, Object> fields) {
         CompetitionDTO competitionDTO = competitionService.getById(id);
 
         fields.forEach((key, value) -> {
@@ -86,7 +86,7 @@ public class CompetitionController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
         competitionService.delete(id);
     }
