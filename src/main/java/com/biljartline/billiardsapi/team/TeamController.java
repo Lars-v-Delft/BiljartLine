@@ -31,7 +31,8 @@ public class TeamController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     public TeamDTO get(@PathVariable long id) {
-        return teamService.getById(id);
+        TeamDTO t = teamService.getById(id);
+        return t;
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,7 +44,8 @@ public class TeamController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("")
     public TeamDTO put(@Valid @RequestBody TeamDTO teamDTO) {
-        return teamService.update(teamDTO);
+        TeamDTO t = teamService.update(teamDTO);
+        return t;
     }
 
     @ResponseStatus(HttpStatus.OK)
