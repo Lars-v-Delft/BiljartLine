@@ -26,6 +26,7 @@ public class Team {
             inverseJoinColumns = @JoinColumn(name = "player_id"))
     private Set<Player> players;
     private String name;
+    @Enumerated(EnumType.STRING)
     private DayOfWeek homeGameDay;
     private int timesViewed;
 }

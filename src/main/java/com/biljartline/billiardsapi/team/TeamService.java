@@ -37,7 +37,9 @@ public class TeamService {
     }
 
     public TeamDTO getById(long id) {
-        return convertToDTO(getEntityById(id));
+        Team t = getEntityById(id);
+        TeamDTO a = convertToDTO(t);
+        return a;
     }
 
     public TeamDTO add(TeamDTO teamDTO) {
@@ -100,7 +102,7 @@ public class TeamService {
                 .mapToLong(Player::getId)
                 .toArray());
         dto.setName(entity.getName());
-        dto.setHomeGameDay(entity.getHomeGameDay().ordinal());
+        dto.setHomeGameDay(entity.getHomeGameDay().getValue());
         dto.setTimesViewed(entity.getTimesViewed());
         return dto;
     }
