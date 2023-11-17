@@ -2,15 +2,20 @@ package com.biljartline.billiardsapi.player;
 
 import com.biljartline.billiardsapi.team.Team;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Player {
+    public Player(long id){
+        this.id = id;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

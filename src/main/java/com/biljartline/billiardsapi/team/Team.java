@@ -3,8 +3,7 @@ package com.biljartline.billiardsapi.team;
 import com.biljartline.billiardsapi.competition.Competition;
 import com.biljartline.billiardsapi.player.Player;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.DayOfWeek;
 import java.util.Set;
@@ -12,7 +11,14 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Team {
+    public Team(long id) {
+        this.id = id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

@@ -63,8 +63,6 @@ public class CompetitionService {
 
     public CompetitionDTO update(CompetitionDTO competitionDTO) {
         Competition competition = convertToEntity(competitionDTO);
-        if (!competitionRepo.existsById(competition.getId()))
-            throw new ResourceNotFoundException("competition with id " + competition.getId() + " could not be found");
         if (competition.getStartDate().isAfter(competition.getEndDate()))
             throw new InvalidArgumentException("Start date cannot be after end date");
 
@@ -91,7 +89,7 @@ public class CompetitionService {
         dto.setId(entity.getId());
         dto.setFederationId(entity.getFederation().getId());
         dto.setName(entity.getName());
-        dto.setTeamIds(entity.getTeams().stream().map(Team::getId).collect(Collectors.toSet()));
+        dto.setTeamIds(entity.getTeams().stream().map(Team::getId).collect(Collectors.toList()));
         dto.setGameType(entity.getGameType().toString());
         dto.setStartDate(entity.getStartDate().toString());
         dto.setEndDate(entity.getEndDate().toString());

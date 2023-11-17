@@ -11,7 +11,13 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class Competition {
+    public Competition(long id){
+        this.id = id;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -23,7 +29,7 @@ public class Competition {
     private Set<Team> teams;
     @Enumerated(EnumType.STRING)
     private GameType gameType;
-    private LocalDate endDate;
     private LocalDate startDate;
+    private LocalDate endDate;
     private boolean published;
 }
