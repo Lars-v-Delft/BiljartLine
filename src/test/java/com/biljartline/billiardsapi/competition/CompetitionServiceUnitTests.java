@@ -7,7 +7,6 @@ import com.biljartline.billiardsapi.federation.FederationRepo;
 import com.biljartline.billiardsapi.team.Team;
 import com.biljartline.billiardsapi.team.TeamRepo;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -37,19 +36,6 @@ public class CompetitionServiceUnitTests {
 
     private static List<Federation> federationList;
     private static List<Team> teamList;
-
-    private boolean equalsDTO(CompetitionDTO a, CompetitionDTO b) {
-        if (a == b) return true;
-        return a.getId() == b.getId() &&
-                a.getFederationId() == b.getFederationId() &&
-                a.isPublished() == b.isPublished() &&
-                Objects.equals(a.getName(), b.getName()) &&
-                Objects.equals(a.getGameType(), b.getGameType()) &&
-                Objects.equals(a.getStartDate(), b.getStartDate()) &&
-                Objects.equals(a.getEndDate(), b.getEndDate()) &&
-                a.getTeamIds().size() == b.getTeamIds().size() &&
-                new HashSet<>(a.getTeamIds()).equals(new HashSet<>(b.getTeamIds())); // Ignore order
-    }
 
     @BeforeAll
     public static void init() {
@@ -94,7 +80,7 @@ public class CompetitionServiceUnitTests {
 
         // Assert
         assertEquals(newCompetition, competitionCaptor.getValue());
-        assertTrue(equalsDTO(addedCompetitionDTO, dto));
+        assertTrue(Compare.equalsCompetitionDTO(addedCompetitionDTO, dto));
 
         verify(federationRepo).existsById(federationList.get(0).getId());
         verify(competitionRepo).save(any(Competition.class));
@@ -186,7 +172,7 @@ public class CompetitionServiceUnitTests {
 
         // Assert
         assertEquals(updatedCompetition, competitionCaptor.getValue());
-        assertTrue(equalsDTO(competitionDTO, dto));
+        assertTrue(Compare.equalsCompetitionDTO(competitionDTO, dto));
 
         verify(competitionRepo).findById(competitionDTO.getId());
         verify(competitionRepo).save(any(Competition.class));
