@@ -32,8 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
-### DATABASE ###
-src/main/resources/secrets.properties
+### Local environment ###
+src/main/resources/application-local.properties
 
 ### LOGS ###
 logs/
