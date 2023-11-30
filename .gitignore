@@ -34,3 +34,6 @@ build/
 
 ### DATABASE ###
 src/main/resources/secrets.properties
+
+### LOGS ###
+logs/

@@ -1,0 +1,7 @@
+This directory serves as an API for accessing and updating data related to the pub-game Billiards.
+It is used as a part of the BiljartLine application,
+which in turn may be used to document and categorise many aspects of the Billiards sport.
+This directory specifically relates to Federations, Competition, Teams and Players.
+
+The BiljartLine application was made as a clone of biljartpoint.nl for a school project.
+It is not intended to be used IRL or to infringe on the existing implementation of biljartpoint.nl.
