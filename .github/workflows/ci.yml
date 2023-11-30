@@ -6,13 +6,17 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: testing_offday
+name: CI-pipeline
 
 on:
   push:
-    branches: [ "dev" ]
+    branches:
+      - dev
+      - 'feature/**'
   pull_request: 
-    branches: [ "dev" ]
+    branches: 
+      - dev
+      - 'feature/**'
 
 jobs:
   build:
