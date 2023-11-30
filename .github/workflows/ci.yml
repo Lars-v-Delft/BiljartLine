@@ -33,11 +33,11 @@ jobs:
         cache: maven
     - name: Build with Maven
       env: 
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          DATABASE_DRIVER: ${{ vars.DATABASE_DRIVER }}
-          DDL_MODE: ${{ vars.DDL_MODE }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+        DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+        DATABASE_DRIVER: ${{ vars.DATABASE_DRIVER }}
+        DDL_MODE: ${{ vars.DDL_MODE }}
       run: mvn -B package --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
