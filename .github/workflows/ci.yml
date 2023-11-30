@@ -6,13 +6,17 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: testing_offday
+name: CI-pipeline
 
 on:
   push:
-    branches: [ "dev" ]
+    branches:
+      - dev
+      - 'feature/**'
   pull_request: 
-    branches: [ "dev" ]
+    branches: 
+      - dev
+      - 'feature/**'
 
 jobs:
   build:
@@ -35,7 +39,3 @@ jobs:
         DATABASE_DRIVER: ${{ vars.DATABASE_DRIVER }}
         DDL_MODE: ${{ vars.DDL_MODE }}
       run: mvn -B package --file pom.xml
-
-    # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
-    - name: Update dependency graph
-      uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
