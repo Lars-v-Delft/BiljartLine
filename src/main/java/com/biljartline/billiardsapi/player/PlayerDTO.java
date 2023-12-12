@@ -1,11 +1,7 @@
 package com.biljartline.billiardsapi.player;
 
-import com.biljartline.billiardsapi.team.Team;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter

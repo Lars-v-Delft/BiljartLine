@@ -3,6 +3,11 @@ package com.biljartline.billiardsapi.team;
 import com.biljartline.billiardsapi.competition.CompetitionDTO;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentException;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentsException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validation;
@@ -21,6 +26,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TeamController {
     private final TeamService teamService;
+    private final Validator validator;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/by-competition/{competitionId}")
@@ -31,8 +37,7 @@ public class TeamController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     public TeamDTO get(@PathVariable long id) {
-        TeamDTO t = teamService.getById(id);
-        return t;
+        return teamService.getById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -44,40 +49,40 @@ public class TeamController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("")
     public TeamDTO put(@Valid @RequestBody TeamDTO teamDTO) {
-        TeamDTO t = teamService.update(teamDTO);
-        return t;
+        return teamService.update(teamDTO);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/{id}")
-    public TeamDTO patch(@PathVariable long id, @RequestBody Map<String, Object> fields) {
-        TeamDTO teamDTO = teamService.getById(id);
+    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
+    public TeamDTO patch(@PathVariable long id, @RequestBody JsonPatch patch) {
+        try {
+            // get existing team
+            TeamDTO teamDTO = teamService.getById(id);
 
-        fields.forEach((key, value) -> {
-            if (Objects.equals(key, "id"))
-                throw new InvalidArgumentException("id cannot be changed");
-            Field field = ReflectionUtils.findField(TeamDTO.class, key);
-            if (field == null)
-                throw new InvalidArgumentException(key + " is not a valid field for team");
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, teamDTO, value);
-        });
+            // apply patch to existing team
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode patchedJsonNode = patch.apply(objectMapper.convertValue(teamDTO, JsonNode.class));
+            TeamDTO patchedTeamDTO = objectMapper.treeToValue(patchedJsonNode, TeamDTO.class);
 
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<TeamDTO>> violations = validator.validate(teamDTO);
+            // validate patched team
+            Set<ConstraintViolation<TeamDTO>> violations = validator.validate(patchedTeamDTO);
+            List<FieldError> fieldErrors = new ArrayList<>();
+            violations.forEach(violation ->
+                    fieldErrors.add(new FieldError(
+                            "teamDTO",
+                            violation.getPropertyPath().toString(),
+                            violation.getMessage()
+                    )));
+            if (!fieldErrors.isEmpty())
+                throw new InvalidArgumentsException(fieldErrors);
 
-        List<FieldError> fieldErrors = new ArrayList<>();
-        violations.forEach(violation ->
-                fieldErrors.add(new FieldError(
-                        "teamDTO",
-                        violation.getPropertyPath().toString(),
-                        violation.getMessage()
-                )));
-
-        if (!fieldErrors.isEmpty())
-            throw new InvalidArgumentsException(fieldErrors);
-
-        return teamService.update(teamDTO);
+            // update team
+            return teamService.update(patchedTeamDTO);
+        } catch (JsonPatchException e) {
+            throw new InvalidArgumentException("Field unknown");
+        } catch (JsonProcessingException e) {
+            throw new InvalidArgumentException("Value invalid");
+        }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
