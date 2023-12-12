@@ -2,11 +2,17 @@ package com.biljartline.billiardsapi.competition;
 
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentException;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentsException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -23,6 +29,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CompetitionController {
     private final CompetitionService competitionService;
+    private final Validator validator;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/by-federation/{federationId}")
@@ -56,35 +63,34 @@ public class CompetitionController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/{id}")
-    public CompetitionDTO patch(@PathVariable long id, @RequestBody Map<String, Object> fields) {
-        CompetitionDTO competitionDTO = competitionService.getById(id);
+    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
+    public CompetitionDTO patch(@PathVariable long id, @RequestBody JsonPatch patch) {
+        try {
+            // get existing competition
+            CompetitionDTO competitionDTO = competitionService.getById(id);
 
-        fields.forEach((key, value) -> {
-            if (Objects.equals(key, "id"))
-                throw new InvalidArgumentException("id cannot be changed");
-            Field field = ReflectionUtils.findField(CompetitionDTO.class, key);
-            if (field == null)
-                throw new InvalidArgumentException(key + " is not a valid field for competition");
-            field.setAccessible(true);
-            ReflectionUtils.setField(field, competitionDTO, value);
-        });
+            // apply patch to existing competition
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode patchedJsonNode = patch.apply(objectMapper.convertValue(competitionDTO, JsonNode.class));
+            CompetitionDTO patchedCompetitionDTO = objectMapper.treeToValue(patchedJsonNode, CompetitionDTO.class);
 
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        Set<ConstraintViolation<CompetitionDTO>> violations = validator.validate(competitionDTO);
+            // validate patched competition
+            Set<ConstraintViolation<CompetitionDTO>> violations = validator.validate(patchedCompetitionDTO);
+            List<FieldError> fieldErrors = new ArrayList<>();
+            violations.forEach(violation ->
+                    fieldErrors.add(new FieldError(
+                            "competitionDTO",
+                            violation.getPropertyPath().toString(),
+                            violation.getMessage()
+                    )));
+            if (!fieldErrors.isEmpty())
+                throw new InvalidArgumentsException(fieldErrors);
 
-        List<FieldError> fieldErrors = new ArrayList<>();
-        violations.forEach(violation ->
-                fieldErrors.add(new FieldError(
-                        "competitionDTO",
-                        violation.getPropertyPath().toString(),
-                        violation.getMessage()
-                )));
-
-        if (!fieldErrors.isEmpty())
-            throw new InvalidArgumentsException(fieldErrors);
-
-        return competitionService.update(competitionDTO);
+            // update competition
+            return competitionService.update(patchedCompetitionDTO);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            throw new InvalidArgumentException("Patch request must follow RFC 6902");
+        }
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

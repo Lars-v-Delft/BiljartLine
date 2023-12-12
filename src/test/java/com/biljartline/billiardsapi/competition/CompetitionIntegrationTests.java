@@ -3,6 +3,7 @@ package com.biljartline.billiardsapi.competition;
 import com.biljartline.billiardsapi.federation.Federation;
 import com.biljartline.billiardsapi.federation.FederationRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -81,17 +82,18 @@ public class CompetitionIntegrationTests {
     @Test
     @Order(3)
     public void patch() throws Exception {
-        Map<String, Object> patchMap = new HashMap<>();
-        patchMap.put("name", "Happy Hands");
-        patchMap.put("gameType", "BALKLINE");
-        patchMap.put("startDate", "2021-01-01");
-        patchMap.put("endDate", "2022-01-01");
-        patchMap.put("published", true);
+        String jsonPatch = "[" +
+                "{ \"op\": \"replace\", \"path\": \"/name\", \"value\": \"Newbies\" }," +
+                "{ \"op\": \"replace\", \"path\": \"/gameType\", \"value\": \"BALKLINE\" }," +
+                "{ \"op\": \"replace\", \"path\": \"/startDate\", \"value\": \"2023-01-01\" }," +
+                "{ \"op\": \"replace\", \"path\": \"/endDate\", \"value\": \"2023-12-31\" }," +
+                "{ \"op\": \"replace\", \"path\": \"/published\", \"value\": true }" +
+                "]";
 
         mockMvc.perform(MockMvcRequestBuilders
                         .patch("/competitions/2")
-                        .content(objectMapper.writeValueAsBytes(patchMap))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .content(jsonPatch)
+                        .contentType("application/json-patch+json"))
                 .andExpect(status().isOk());
     }
 
