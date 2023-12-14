@@ -33,13 +33,12 @@ public class TeamService {
         List<Team> teams = teamRepo.findByCompetitionId(competitionId);
         return teams.stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public TeamDTO getById(long id) {
-        Team t = getEntityById(id);
-        TeamDTO a = convertToDTO(t);
-        return a;
+        Team team = getEntityById(id);
+        return convertToDTO(team);
     }
 
     public TeamDTO add(TeamDTO teamDTO) {

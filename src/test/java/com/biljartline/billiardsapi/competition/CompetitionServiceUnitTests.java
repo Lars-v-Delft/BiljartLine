@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CompetitionServiceUnitTests {
+class CompetitionServiceUnitTests {
     @InjectMocks
     private CompetitionService competitionService;
 
@@ -38,7 +38,7 @@ public class CompetitionServiceUnitTests {
     private static List<Team> teamList;
 
     @BeforeAll
-    public static void init() {
+    static void init() {
         federationList = List.of(
                 new Federation(1),
                 new Federation(2)
@@ -53,7 +53,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void save_Happy() {
+    void save_Happy() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 0, federationList.get(0).getId(), "Happy Feet", new ArrayList<>(), "STRAIGHT_RAIL",
@@ -87,7 +87,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void save_Sad_FederationIdUnknown() {
+    void save_Sad_FederationIdUnknown() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 0, federationList.get(0).getId(), "The unknown", new ArrayList<>(), "STRAIGHT_RAIL",
@@ -104,7 +104,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void save_Sad_TeamIdPresent() {
+    void save_Sad_TeamIdPresent() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 0, 1, "The Premature", List.of(1L), "STRAIGHT_RAIL",
@@ -119,7 +119,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void save_Sad_IdIsPresent() {
+    void save_Sad_IdIsPresent() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 1, 1, "The Premature", List.of(1L), "STRAIGHT_RAIL",
@@ -134,7 +134,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void save_Sad_StartDateAfterEndDate() {
+    void save_Sad_StartDateAfterEndDate() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 0, 1, "The Premature", new ArrayList<>(), "STRAIGHT_RAIL",
@@ -149,7 +149,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void update_Happy() {
+    void update_Happy() {
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 1, 1, "Happy Hands", List.of(teamList.get(0).getId(), teamList.get(1).getId()), "BALKLINE",
                 "2022-02-02", "2023-02-02", true
@@ -179,7 +179,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void update_Sad_StartDateAfterEndDate(){
+    void update_Sad_StartDateAfterEndDate() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 1, 1, "Happy Hands", List.of(teamList.get(0).getId(), teamList.get(1).getId()), "BALKLINE",
@@ -190,11 +190,11 @@ public class CompetitionServiceUnitTests {
         Exception exception = assertThrows(InvalidArgumentException.class, () -> competitionService.update(competitionDTO));
 
         assertEquals("Start date cannot be after end date", exception.getMessage());
-       verify(federationRepo, never()).save(any());
+        verify(federationRepo, never()).save(any());
     }
 
     @Test
-    public void update_Sad_UnknownId(){
+    void update_Sad_UnknownId() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 1, 1, "Happy Hands", List.of(teamList.get(0).getId(), teamList.get(1).getId()), "BALKLINE",
@@ -210,7 +210,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void update_Sad_FederationIdChanged(){
+    void update_Sad_FederationIdChanged() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 1, 2, "Happy Hands", List.of(teamList.get(0).getId(), teamList.get(1).getId()), "BALKLINE",
@@ -230,7 +230,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void update_Sad_TeamIdsChanged(){
+    void update_Sad_TeamIdsChanged() {
         // Arrange
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 1, 1, "Happy Hands", List.of(teamList.get(2).getId(), teamList.get(3).getId()), "BALKLINE",
@@ -250,7 +250,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void delete_Happy(){
+    void delete_Happy() {
         // Arrange
         long competitionId = 1;
         when(competitionRepo.existsById(competitionId)).thenReturn(true);
@@ -271,7 +271,7 @@ public class CompetitionServiceUnitTests {
     }
 
     @Test
-    public void delete_Sad_UnknownId (){
+    void delete_Sad_UnknownId() {
         // Arrange
         long competitionId = 1;
         when(competitionRepo.existsById(competitionId)).thenReturn(false);

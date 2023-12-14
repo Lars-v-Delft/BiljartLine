@@ -9,18 +9,13 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -88,8 +83,10 @@ public class CompetitionController {
 
             // update competition
             return competitionService.update(patchedCompetitionDTO);
-        } catch (JsonPatchException | JsonProcessingException e) {
-            throw new InvalidArgumentException("Patch request must follow RFC 6902");
+        } catch (JsonPatchException e) {
+            throw new InvalidArgumentException("Field unknown");
+        } catch (JsonProcessingException e) {
+            throw new InvalidArgumentException("Value invalid");
         }
     }
 

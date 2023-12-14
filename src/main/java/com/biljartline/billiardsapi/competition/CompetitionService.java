@@ -31,7 +31,7 @@ public class CompetitionService {
 
         return competitions.stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private Competition getEntityById(long id) {
@@ -89,7 +89,7 @@ public class CompetitionService {
         dto.setId(entity.getId());
         dto.setFederationId(entity.getFederation().getId());
         dto.setName(entity.getName());
-        dto.setTeamIds(entity.getTeams().stream().map(Team::getId).collect(Collectors.toList()));
+        dto.setTeamIds(entity.getTeams().stream().map(Team::getId).toList());
         dto.setGameType(entity.getGameType().toString());
         dto.setStartDate(entity.getStartDate().toString());
         dto.setEndDate(entity.getEndDate().toString());

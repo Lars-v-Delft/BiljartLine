@@ -1,7 +1,5 @@
 package com.biljartline.billiardsapi.team;
 
-import com.biljartline.billiardsapi.competition.Competition;
-import com.biljartline.billiardsapi.competition.CompetitionDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

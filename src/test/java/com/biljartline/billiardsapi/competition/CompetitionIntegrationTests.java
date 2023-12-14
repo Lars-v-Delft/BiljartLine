@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class CompetitionIntegrationTests {
+class CompetitionIntegrationTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,7 +39,7 @@ public class CompetitionIntegrationTests {
     private CompetitionRepo competitionRepo;
 
     @BeforeAll
-    public void init() {
+    void init() {
         Federation fed1 = new Federation(0, "Baseliners");
         Federation federation = federationRepo.save(fed1);
         Competition comp1 = new Competition(
@@ -51,7 +51,7 @@ public class CompetitionIntegrationTests {
 
     @Test
     @Order(1)
-    public void add() throws Exception {
+    void add() throws Exception {
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 0, 1, "Happy Feet", new ArrayList<>(), "STRAIGHT_RAIL",
                 "2020-01-01", "2021-01-01", false
@@ -66,7 +66,7 @@ public class CompetitionIntegrationTests {
 
     @Test
     @Order(2)
-    public void put() throws Exception {
+    void put() throws Exception {
         CompetitionDTO competitionDTO = new CompetitionDTO(
                 2, 1, "Happy Hands", new ArrayList<>(), "BALKLINE",
                 "2021-01-01", "2022-01-01", true
@@ -81,7 +81,7 @@ public class CompetitionIntegrationTests {
 
     @Test
     @Order(3)
-    public void patch() throws Exception {
+    void patch() throws Exception {
         String jsonPatch = "[" +
                 "{ \"op\": \"replace\", \"path\": \"/name\", \"value\": \"Newbies\" }," +
                 "{ \"op\": \"replace\", \"path\": \"/gameType\", \"value\": \"BALKLINE\" }," +
@@ -99,7 +99,7 @@ public class CompetitionIntegrationTests {
 
     @Test
     @Order(4)
-    public void delete() throws Exception {
+    void delete() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/competitions/2")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -108,7 +108,7 @@ public class CompetitionIntegrationTests {
 
     @Test
     @Order(5)
-    public void get() throws Exception {
+    void get() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/competitions/1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -117,7 +117,7 @@ public class CompetitionIntegrationTests {
 
     @Test
     @Order(6)
-    public void findByFederation() throws Exception {
+    void findByFederation() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/competitions/by-federation/1")
                         .param("fromDate", "2020-01-01")

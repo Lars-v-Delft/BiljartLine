@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 public class InvalidArgumentsException extends RuntimeException{
-    List<FieldError> fieldErrors;
+    private final List<FieldError> fieldErrors;
 
     public InvalidArgumentsException(List<FieldError> fieldErrors){
         this.fieldErrors = fieldErrors;
