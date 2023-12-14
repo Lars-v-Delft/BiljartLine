@@ -3,6 +3,7 @@ package com.biljartline.billiardsapi.competition;
 import com.biljartline.billiardsapi.federation.Federation;
 import com.biljartline.billiardsapi.federation.FederationRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONArray;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
