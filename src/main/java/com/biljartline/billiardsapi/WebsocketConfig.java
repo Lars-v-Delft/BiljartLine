@@ -14,7 +14,7 @@ public class WebsocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry){
         // client will connect to this to open a websocket connection
         // ws://localhost:8080/billiards-chat
-        registry.addEndpoint("/billiards-chat");
+        registry.addEndpoint("/billiards-chat").setAllowedOrigins("http://localhost:3000");
     }
 
     @Override
