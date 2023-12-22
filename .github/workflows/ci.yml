@@ -38,6 +38,7 @@ jobs:
         DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         DATABASE_DRIVER: ${{ vars.DATABASE_DRIVER }}
         DDL_MODE: ${{ vars.DDL_MODE }}
+        AUTHENTICATION_API_URL: ${{ secrets.AUTHENTICATION_API_URL }}
     - name: Test
       run: mvn -B test
     - name: Package
