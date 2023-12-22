@@ -1,6 +1,5 @@
 package com.biljartline.billiardsapi.security;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
