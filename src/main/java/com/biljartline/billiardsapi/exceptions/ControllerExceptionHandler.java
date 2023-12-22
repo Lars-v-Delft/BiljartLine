@@ -26,14 +26,14 @@ public class ControllerExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(AuthenticationException.class)
-    public ErrorMessage handleException(AuthenticationException e) {
+    public ErrorMessage handleAuthenticationException(AuthenticationException e) {
         log.error("An unhandled exception occurred", e);
         return new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, "User could not be authenticated");
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = {ResourceNotFoundException.class})
-    public ErrorMessage handleApiNotFoundException(ResourceNotFoundException e) {
+    public ErrorMessage handleResourceNotFoundException(ResourceNotFoundException e) {
         log.warn("A ResourceNotFoundException occurred", e);
         return new ErrorMessage(HttpStatus.NOT_FOUND, e.getMessage());
     }
@@ -61,21 +61,21 @@ public class ControllerExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidArgumentException.class)
-    public ErrorMessage handleApiInvalidArgumentException(InvalidArgumentException e) {
+    public ErrorMessage handleInvalidArgumentException(InvalidArgumentException e) {
         log.warn("An InvalidArgumentException occurred", e);
         return new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ErrorMessage handleApiInvalidArgumentException(HttpMessageNotReadableException e) {
+    public ErrorMessage handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.warn("A HttpMessageNotReadableException occurred", e);
         return new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(BadCredentialsException.class)
-    public ErrorMessage handleApiInvalidArgumentException(BadCredentialsException e) {
+    public ErrorMessage handleBadCredentialsException(BadCredentialsException e) {
         log.warn("A BadCredentialsException occurred", e);
         return new ErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
     }
