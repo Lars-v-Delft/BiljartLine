@@ -17,8 +17,7 @@ public class AuthenticationAPIService {
     private final RestTemplate restTemplate;
     public BiljartLineUser getUserFromJWT(String jwt) throws AuthenticationException, JsonProcessingException {
         // query userDetails from authentication API
-        String baseURL = "http://localhost:8081";
-        String getUserDetailsURL = baseURL + "/authentication/userdetails";
+        String getUserDetailsURL = System.getenv("AUTHENTICATION_API_URL") + "/authentication/userdetails";
         // set header and body
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
