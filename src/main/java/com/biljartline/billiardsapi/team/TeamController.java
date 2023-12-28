@@ -1,6 +1,5 @@
 package com.biljartline.billiardsapi.team;
 
-import com.biljartline.billiardsapi.competition.CompetitionDTO;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentException;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentsException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,16 +9,15 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
-import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/teams")

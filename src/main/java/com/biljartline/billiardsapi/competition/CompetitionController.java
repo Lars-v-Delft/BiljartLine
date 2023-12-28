@@ -34,9 +34,6 @@ public class CompetitionController {
             @RequestParam(required = false, defaultValue = "0001-01-01", value = "fromDate") LocalDate fromDate,
             @RequestParam(required = false, defaultValue = "9999-09-09", value = "toDate") LocalDate toDate,
             @RequestParam(required = false, defaultValue = "true", value = "publishedOnly") boolean publishedOnly) {
-        if (!publishedOnly) {
-            // check permissions
-        }
         return competitionService.getByFederation(federationId, fromDate, toDate, publishedOnly);
     }
 

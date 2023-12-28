@@ -5,16 +5,14 @@ import com.biljartline.billiardsapi.exceptions.ResourceNotFoundException;
 import com.biljartline.billiardsapi.federation.Federation;
 import com.biljartline.billiardsapi.federation.FederationRepo;
 import com.biljartline.billiardsapi.team.Team;
-import com.biljartline.billiardsapi.team.TeamDTO;
 import com.biljartline.billiardsapi.team.TeamRepo;
-import com.biljartline.billiardsapi.team.TeamService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
