@@ -23,7 +23,7 @@ public class SecurityConfiguration {
     // defines filter-chain that is followed upon request
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                // sets cors config
+                .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 // sets authentication requirements for endpoints
                 .authorizeHttpRequests(r -> r
@@ -42,5 +42,4 @@ public class SecurityConfiguration {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
 }
