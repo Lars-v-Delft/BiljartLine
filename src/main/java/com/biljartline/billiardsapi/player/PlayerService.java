@@ -1,7 +1,6 @@
 package com.biljartline.billiardsapi.player;
 
 import com.biljartline.billiardsapi.team.Team;
-import com.biljartline.billiardsapi.team.TeamRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

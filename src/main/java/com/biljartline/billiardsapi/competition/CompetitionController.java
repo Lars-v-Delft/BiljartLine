@@ -11,13 +11,14 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/competitions")
@@ -33,9 +34,6 @@ public class CompetitionController {
             @RequestParam(required = false, defaultValue = "0001-01-01", value = "fromDate") LocalDate fromDate,
             @RequestParam(required = false, defaultValue = "9999-09-09", value = "toDate") LocalDate toDate,
             @RequestParam(required = false, defaultValue = "true", value = "publishedOnly") boolean publishedOnly) {
-        if (!publishedOnly) {
-            // check permissions
-        }
         return competitionService.getByFederation(federationId, fromDate, toDate, publishedOnly);
     }
 
