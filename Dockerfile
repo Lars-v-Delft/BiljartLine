@@ -2,6 +2,7 @@
 FROM maven AS build
 WORKDIR /app
 COPY . /app
+
 # Database variables
 ARG DATABASE_DRIVER
 ARG DATABASE_URL
@@ -9,6 +10,9 @@ ARG DATABASE_USERNAME
 ARG DATABASE_PASSWORD
 # ORM variables
 ARG DDL_MODE
+# AuthenticationAPI variables
+ARG AUTHENTICATION_API_URL
+
 RUN mvn clean install
 
 # get image containing OpenJDK 17 runtime for running the .jar file
