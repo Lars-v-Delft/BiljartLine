@@ -34,3 +34,6 @@ build/
 
 ### LOGS ###
 logs/
+
+### ENVIRONMENT ###
+billiardsapidocker.env
