@@ -32,8 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
-### DATABASE ###
-src/main/resources/secrets.properties
-
 ### LOGS ###
 logs/
+
+### ENVIRONMENT ###
+billiardsapidocker.env
+billiardsdb/billiardsdbdocker.env

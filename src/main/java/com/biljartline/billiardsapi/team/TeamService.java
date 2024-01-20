@@ -1,7 +1,6 @@
 package com.biljartline.billiardsapi.team;
 
 import com.biljartline.billiardsapi.competition.Competition;
-import com.biljartline.billiardsapi.competition.CompetitionDTO;
 import com.biljartline.billiardsapi.competition.CompetitionRepo;
 import com.biljartline.billiardsapi.exceptions.InvalidArgumentException;
 import com.biljartline.billiardsapi.exceptions.ResourceNotFoundException;
@@ -11,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,13 +35,12 @@ public class TeamService {
         List<Team> teams = teamRepo.findByCompetitionId(competitionId);
         return teams.stream()
                 .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public TeamDTO getById(long id) {
-        Team t = getEntityById(id);
-        TeamDTO a = convertToDTO(t);
-        return a;
+        Team team = getEntityById(id);
+        return convertToDTO(team);
     }
 
     public TeamDTO add(TeamDTO teamDTO) {
