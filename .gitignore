@@ -34,3 +34,7 @@ build/
 
 ### LOGS ###
 logs/
+
+### ENVIRONMENT ###
+billiardsapidocker.env
+billiardsdb/billiardsdbdocker.env
